@@ -23,7 +23,7 @@ export const HomeScreenPics = shuffleArray([
   }
 ])
 
-export const TopPicksScreenPics = shuffleArray([
+export const TopPicksScreenPics = [
   {
     pic: require('../assets/images/nature/cascade_tufs.jpg'),
     title: 'Cascade de Tufs',
@@ -44,5 +44,5 @@ export const TopPicksScreenPics = shuffleArray([
     title: 'Trouville',
     caption: '40K likes',
   }
-])
+]
 
