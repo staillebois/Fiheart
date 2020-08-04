@@ -7,6 +7,7 @@ import HomeScreen from '../screens/HomeScreen';
 import MessagesScreen from '../screens/MessagesScreen'
 import ProfileScreen from '../screens/ProfileScreen'
 import TopPicksScreen from '../screens/TopPicksScreen'
+import MapScreen from '../screens/MapScreen'
 
 const HomeStack = createStackNavigator({
     Home: HomeScreen,
@@ -68,11 +69,26 @@ ProfileStack.navigationOptions = {
   ),
 }
 
+const MapStack = createStackNavigator({
+  Map: MapScreen,
+},
+{
+    headerMode: 'none',
+})
+
+MapStack.navigationOptions = {
+  tabBarLabel: 'Map',
+  tabBarIcon: ({ focused }) => (
+    <TabBarIcon Icon={FontAwesome} focused={focused} name="map-marker" />
+  ),
+}
+
 const tabNavigator = createBottomTabNavigator({
   HomeStack,
-  ProfileStack,
-  MessagesStack,
   TopPicksStack,
+  MapStack,
+  // MessagesStack,
+  ProfileStack,
 });
 
 export default tabNavigator;

@@ -3,7 +3,7 @@ import shuffleArray from '../utils/shuffleArray'
 export const HomeScreenPics = shuffleArray([
   {
     pic: require('../assets/images/nature/cascade_tufs.jpg'),
-    title: 'Cascade de Tufs',
+    title: 'Cascade des Tufs',
     caption: 'France',
   },
   {
@@ -26,7 +26,7 @@ export const HomeScreenPics = shuffleArray([
 export const TopPicksScreenPics = [
   {
     pic: require('../assets/images/nature/cascade_tufs.jpg'),
-    title: 'Cascade de Tufs',
+    title: 'Cascade des Tufs',
     caption: '100K likes',
   },
   {
