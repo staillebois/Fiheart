@@ -7,7 +7,13 @@ import { MaterialIcons, MaterialCommunityIcons, FontAwesome, Feather} from '@exp
 
 import AppNavigator from './navigation/AppNavigator';
 
+import {YellowBox} from 'react-native';
+
 export default function App(props) {
+
+  /*Find a way to fix this warnings on deck swiper */
+  YellowBox.ignoreWarnings(['Animated']);
+
   const [isLoadingComplete, setLoadingComplete] = useState(false);
 
   if (!isLoadingComplete && !props.skipLoadingScreen) {
