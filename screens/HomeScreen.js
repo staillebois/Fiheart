@@ -1,186 +1,234 @@
-import React from 'react'
-import { StyleSheet, Text, View, Dimensions, Image, Animated, PanResponder } from 'react-native'
+import React from 'react';
+import {
+  Image,
+  StatusBar,
+  StyleSheet,
+  Text,
+  View,
+  SafeAreaView,
+  Dimensions
+} from 'react-native';
 
-const SCREEN_HEIGHT = Dimensions.get('window').height
-const SCREEN_WIDTH = Dimensions.get('window').width
+import data from './data';
+import Swiper from 'react-native-deck-swiper';
+import { Transitioning, Transition } from 'react-native-reanimated';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
-const  Users = [
-  { id: "1", uri: require(('../assets/images/nature/cascade_tufs.jpg')) },
-  { id: "2", uri: require('../assets/images/nature/gorges_du_verdon.jpg') },
-  { id: "3", uri: require('../assets/images/nature/mont_saint_michel.jpg') },
-  { id: "4", uri: require('../assets/images/nature/trouville.jpg') },
-]
+const { width } = Dimensions.get('window');
 
-class HomeScreen extends React.Component {
+const stackSize = 4;
+const colors = {
+  red: '#EC2379',
+  blue: '#0070FF',
+  gray: '#777777',
+  white: '#ffffff',
+  black: '#000000'
+};
+const ANIMATION_DURATION = 200;
 
-  constructor() {
-    super()
+const transition = (
+  <Transition.Sequence>
+    <Transition.Out
+      type='slide-bottom'
+      durationMs={ANIMATION_DURATION}
+      interpolation='easeIn'
+    />
+    <Transition.Together>
+      <Transition.In
+        type='fade'
+        durationMs={ANIMATION_DURATION}
+        delayMs={ANIMATION_DURATION / 2}
+      />
+      <Transition.In
+        type='slide-bottom'
+        durationMs={ANIMATION_DURATION}
+        delayMs={ANIMATION_DURATION / 2}
+        interpolation='easeOut'
+      />
+    </Transition.Together>
+  </Transition.Sequence>
+);
 
-    this.position = new Animated.ValueXY()
-    this.state = {
-      currentIndex: 0
-    }
+const swiperRef = React.createRef();
+const transitionRef = React.createRef();
 
-    this.rotate = this.position.x.interpolate({
-      inputRange: [-SCREEN_WIDTH / 2, 0, SCREEN_WIDTH / 2],
-      outputRange: ['-10deg', '0deg', '10deg'],
-      extrapolate: 'clamp'
-    })
+const Card = ({ card }) => {
+  return (
+    <View style={styles.card}>
+      <Image source={{ uri: card.image }} style={styles.cardImage} />
+    </View>
+  );
+};
 
-    this.rotateAndTranslate = {
-      transform: [{
-        rotate: this.rotate
-      },
-      ...this.position.getTranslateTransform()
-      ]
-    }
+const CardDetails = ({ index }) => (
+  <View key={data[index].id} style={{ alignItems: 'center' }}>
+    <Text style={[styles.text, styles.heading]} numberOfLines={2}>
+      {data[index].name}
+    </Text>
+    <Text style={[styles.text, styles.price]}>{data[index].price}</Text>
+  </View>
+);
 
-    this.likeOpacity = this.position.x.interpolate({
-      inputRange: [-SCREEN_WIDTH / 2, 0, SCREEN_WIDTH / 2],
-      outputRange: [0, 0, 1],
-      extrapolate: 'clamp'
-    })
-    this.dislikeOpacity = this.position.x.interpolate({
-      inputRange: [-SCREEN_WIDTH / 2, 0, SCREEN_WIDTH / 2],
-      outputRange: [1, 0, 0],
-      extrapolate: 'clamp'
-    })
+export default function HomeScreen() {
+  const [index, setIndex] = React.useState(0);
+  const onSwiped = () => {
+    transitionRef.current.animateNextTransition();
+    setIndex((index + 1) % data.length);
+  };
 
-    this.nextCardOpacity = this.position.x.interpolate({
-      inputRange: [-SCREEN_WIDTH / 2, 0, SCREEN_WIDTH / 2],
-      outputRange: [1, 0, 1],
-      extrapolate: 'clamp'
-    })
-    this.nextCardScale = this.position.x.interpolate({
-      inputRange: [-SCREEN_WIDTH / 2, 0, SCREEN_WIDTH / 2],
-      outputRange: [1, 0.8, 1],
-      extrapolate: 'clamp'
-    })
-
-  }
-  UNSAFE_componentWillMount() {
-    this.PanResponder = PanResponder.create({
-
-      onStartShouldSetPanResponder: (evt, gestureState) => true,
-      onPanResponderMove: (evt, gestureState) => {
-
-        this.position.setValue({ x: gestureState.dx, y: gestureState.dy })
-      },
-      onPanResponderRelease: (evt, gestureState) => {
-
-        if (gestureState.dx > 120) {
-          Animated.spring(this.position, {
-            toValue: { x: SCREEN_WIDTH + 100, y: gestureState.dy },
-            useNativeDriver: true
-          }).start(() => {
-            this.setState({ currentIndex: this.state.currentIndex + 1 }, () => {
-              this.position.setValue({ x: 0, y: 0 })
-            })
-          })
-        }
-        else if (gestureState.dx < -120) {
-          Animated.spring(this.position, {
-            toValue: { x: -SCREEN_WIDTH - 100, y: gestureState.dy },
-            useNativeDriver: true
-          }).start(() => {
-            this.setState({ currentIndex: this.state.currentIndex + 1 }, () => {
-              this.position.setValue({ x: 0, y: 0 })
-            })
-          })
-        }
-        else {
-          Animated.spring(this.position, {
-            toValue: { x: 0, y: 0 },
-            friction: 4,
-            useNativeDriver: true
-          }).start()
-        }
-      }
-    })
-  }
-
-  renderUsers = () => {
-
-    return Users.map((item, i) => {
-
-
-      if (i < this.state.currentIndex) {
-        return null
-      }
-      else if (i == this.state.currentIndex) {
-
-        return (
-          <Animated.View
-            {...this.PanResponder.panHandlers}
-            key={item.id} style={[this.rotateAndTranslate, { height: SCREEN_HEIGHT - 120, width: SCREEN_WIDTH, padding: 10, position: 'absolute' }]}>
-            <Animated.View style={{ opacity: this.likeOpacity, transform: [{ rotate: '-30deg' }], position: 'absolute', top: 50, left: 40, zIndex: 1000 }}>
-              <Text style={{ borderWidth: 4, borderColor: '#6ee3b4', color: '#6ee3b4', fontSize: 45, fontWeight: '800', padding: 10, borderRadius: 5 }}>LIKE</Text>
-
-            </Animated.View>
-
-            <Animated.View style={{ opacity: this.dislikeOpacity, transform: [{ rotate: '30deg' }], position: 'absolute', top: 50, right: 40, zIndex: 1000 }}>
-              <Text style={{ borderWidth: 4, borderColor: '#ec5288', color: '#ec5288', fontSize: 45, fontWeight: '800', padding: 10, borderRadius: 5}}>NOPE</Text>
-
-            </Animated.View>
-
-            <Image
-              style={{ flex: 1, height: null, width: null, resizeMode: 'cover', borderRadius: 20 }}
-              source={item.uri} />
-
-          </Animated.View>
-        )
-      }
-      else {
-        return (
-          <Animated.View
-
-            key={item.id} style={[{
-              opacity: this.nextCardOpacity,
-              transform: [{ scale: this.nextCardScale }],
-              height: SCREEN_HEIGHT - 120, width: SCREEN_WIDTH, padding: 10, position: 'absolute'
-            }]}>
-            <Animated.View style={{ opacity: 0, transform: [{ rotate: '-30deg' }], position: 'absolute', top: 50, left: 40, zIndex: 1000 }}>
-              <Text style={{ borderWidth: 4, borderColor: '#6ee3b4', color: '#6ee3b4', fontSize: 45, fontWeight: 'bold', padding: 10, borderRadius: 5 }}>LIKE</Text>
-
-            </Animated.View>
-
-            <Animated.View style={{ opacity: 0, transform: [{ rotate: '30deg' }], position: 'absolute', top: 50, right: 40, zIndex: 1000 }}>
-              <Text style={{ borderWidth: 4, borderColor: '#ec5288', color: '#ec5288', fontSize: 45, fontWeight: 'bold', padding: 10, borderRadius: 5 }}>NOPE</Text>
-
-            </Animated.View>
-
-            <Image
-              style={{ flex: 1, height: null, width: null, resizeMode: 'cover', borderRadius: 20 }}
-              source={item.uri} />
-
-          </Animated.View>
-        )
-      }
-    }).reverse()
-  }
-
-  render() {
-    return (
-      <View style={{ flex: 1 }}>
-        <View style={{ height: 60 }}>
-        </View>
-        <View style={{ flex: 1 }}>
-          {this.renderUsers()}
-        </View>
-        <View style={{ height: 60 }}>
+  return (
+    <SafeAreaView style={styles.container}>
+      <MaterialCommunityIcons
+        name='crop-square'
+        size={width}
+        color={colors.blue}
+        style={{
+          opacity: 0.05,
+          transform: [{ rotate: '45deg' }, { scale: 1.6 }],
+          position: 'absolute',
+          left: -15,
+          top: 30
+        }}
+      />
+      <StatusBar hidden={true} />
+      <View style={styles.swiperContainer}>
+        <Swiper
+          useViewOverflow={Platform.OS === 'ios'}
+          ref={swiperRef}
+          cards={data}
+          cardIndex={index}
+          renderCard={card => <Card card={card} />}
+          infinite
+          backgroundColor={'transparent'}
+          onSwiped={onSwiped}
+          onTapCard={() => swiperRef.current.swipeLeft()}
+          cardVerticalMargin={50}
+          stackSize={stackSize}
+          stackScale={10}
+          stackSeparation={14}
+          animateOverlayLabelsOpacity
+          animateCardOpacity
+          disableTopSwipe
+          disableBottomSwipe
+          overlayLabels={{
+            left: {
+              title: 'NOPE',
+              style: {
+                label: {
+                  backgroundColor: colors.red,
+                  borderColor: colors.red,
+                  color: colors.white,
+                  borderWidth: 1,
+                  fontSize: 24
+                },
+                wrapper: {
+                  flexDirection: 'column',
+                  alignItems: 'flex-end',
+                  justifyContent: 'flex-start',
+                  marginTop: 20,
+                  marginLeft: -20
+                }
+              }
+            },
+            right: {
+              title: 'LIKE',
+              style: {
+                label: {
+                  backgroundColor: colors.blue,
+                  borderColor: colors.blue,
+                  color: colors.white,
+                  borderWidth: 1,
+                  fontSize: 24
+                },
+                wrapper: {
+                  flexDirection: 'column',
+                  alignItems: 'flex-start',
+                  justifyContent: 'flex-start',
+                  marginTop: 20,
+                  marginLeft: 20
+                }
+              }
+            }
+          }}
+        />
+      </View>
+      <View style={styles.bottomContainer}>
+        <Transitioning.View
+          ref={transitionRef}
+          transition={transition}
+          style={styles.bottomContainerMeta}
+        >
+          <CardDetails index={index} />
+        </Transitioning.View>
+        <View style={styles.bottomContainerButtons}>
+          <MaterialCommunityIcons.Button
+            name='close'
+            size={94}
+            backgroundColor='transparent'
+            underlayColor='transparent'
+            activeOpacity={0.3}
+            color={colors.red}
+            onPress={() => swiperRef.current.swipeLeft()}
+          />
+          <MaterialCommunityIcons.Button
+            name='circle-outline'
+            size={94}
+            backgroundColor='transparent'
+            underlayColor='transparent'
+            activeOpacity={0.3}
+            color={colors.blue}
+            onPress={() => swiperRef.current.swipeRight()}
+          />
         </View>
       </View>
-    )
-  }
+    </SafeAreaView>
+  );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: colors.white
   },
-})
-
-export default HomeScreen
+  swiperContainer: {
+    flex: 0.55
+  },
+  bottomContainer: {
+    flex: 0.45,
+    justifyContent: 'space-evenly'
+  },
+  bottomContainerMeta: { alignContent: 'flex-end', alignItems: 'center' },
+  bottomContainerButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-evenly'
+  },
+  cardImage: {
+    width: 160,
+    flex: 1,
+    resizeMode: 'contain'
+  },
+  card: {
+    flex: 0.45,
+    borderRadius: 8,
+    shadowRadius: 25,
+    shadowColor: colors.black,
+    shadowOpacity: 0.08,
+    shadowOffset: { width: 0, height: 0 },
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: colors.white
+  },
+  text: {
+    textAlign: 'center',
+    fontSize: 50,
+    backgroundColor: 'transparent'
+  },
+  done: {
+    textAlign: 'center',
+    fontSize: 30,
+    color: colors.white,
+    backgroundColor: 'transparent'
+  },
+  heading: { fontSize: 24, marginBottom: 10, color: colors.gray },
+  price: { color: colors.blue, fontSize: 32, fontWeight: '500' }
+});

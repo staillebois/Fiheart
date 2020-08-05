@@ -2,6 +2,8 @@
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
     "start": "expo start",
+    "list-emulator": "C:/Users/staillebois/AppData/Local/Android/Sdk/emulator/emulator -list-avds",
+    "android-emulator": "C:/Users/staillebois/AppData/Local/Android/Sdk/emulator/emulator @Nexus_5X_API_29_Google_play",
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
@@ -25,11 +27,13 @@
     "react": "~16.11.0",
     "react-dom": "~16.11.0",
     "react-native": "https://github.com/expo/react-native/archive/sdk-38.0.2.tar.gz",
+    "react-native-deck-swiper": "^1.6.7",
     "react-native-elements": "^1.2.7",
     "react-native-gesture-handler": "~1.6.0",
     "react-native-maps": "0.27.1",
     "react-native-reanimated": "~1.9.0",
     "react-native-screens": "^2.9.0",
+    "react-native-view-overflow": "0.0.5",
     "react-native-web": "^0.11.7",
     "react-navigation": "^3.12.0",
     "react-navigation-tabs": "^2.5.6"
