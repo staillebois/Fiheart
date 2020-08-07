@@ -1,109 +1,156 @@
-import React from 'react'
-import { Image, SafeAreaView, StyleSheet, View, TouchableOpacity } from 'react-native'
-import { Divider, Icon, Text } from 'react-native-elements'
-import Layout from '../constants/Layout'
-import { HomeScreenPics } from '../constants/Pics'
-import { randomNo } from '../utils/randomNo'
-import * as firebase from "firebase";
+import React from 'react';
+import { View, SafeAreaView, StyleSheet, ScrollView } from 'react-native';
+import {
+  Avatar,
+  Title,
+  Caption,
+  Text,
+  TouchableRipple,
+} from 'react-native-paper';
 
-const { pic, title } = HomeScreenPics[randomNo(1, HomeScreenPics.length)]
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-const Social = ({ name }) => (
-  <Icon
-    name={name}
-    type="font-awesome"
-    containerStyle={styles.iconContainer}
-    size={32}
-  />
-)
+import files from '../assets/filesBase64';
 
-class ProfileScreen extends React.Component {
-  state = {
-    email: "",
-    displayName: ""
-  };
+const ProfileScreen = () => {
 
-  componentDidMount() {
-    const { email, displayName } = firebase.auth().currentUser;
+  return (
+    <ScrollView style={styles.container}>
+      <SafeAreaView>
 
-    this.setState({ email, displayName });
-  }
-
-  signOutUser = () => {
-    firebase.auth().signOut();
-  };
-
-  render() {
-    return (
-      <SafeAreaView style={styles.container}>
-        <View style={styles.imageContainer}>
-          <Image source={pic} style={styles.image} />
+        <View style={styles.userInfoSection}>
+          <View style={{ flexDirection: 'row', marginTop: 15 }}>
+            <Avatar.Image
+              source={{
+                uri: 'https://api.adorable.io/avatars/80/abott@adorable.png',
+              }}
+              size={80}
+            />
+            <View style={{ marginLeft: 20 }}>
+              <Title style={[styles.title, {
+                marginTop: 15,
+                marginBottom: 5,
+              }]}>John Doe</Title>
+              <Caption style={styles.caption}>@j_doe</Caption>
+            </View>
+          </View>
         </View>
-        <Text h4 style={styles.name}>
-          {this.state.displayName}
-        </Text>
-        <Text style={styles.desc}>Fashion Designer at Amelia & Co.</Text>
-        <Divider style={styles.divider} />
-        <Text style={styles.desc}>
-          I love to travel. I have a cat named pickles. If he likes you, I
-          probably will too.
-        </Text>
-        <TouchableOpacity style={{ marginTop: 32 }} onPress={this.signOutUser}>
-          <Text>Logout</Text>
-        </TouchableOpacity>
-        <Divider style={styles.divider} />
-        <Text style={styles.desc}>Find me on Social here</Text>
-        <View style={styles.socialLinks}>
-          <Social name="snapchat" />
-          <Social name="instagram" />
-          <Social name="facebook-square" />
+
+        <View style={styles.userInfoSection}>
+          <View style={styles.row}>
+            <Icon name="map-marker-radius" color="#777777" size={20} />
+            <Text style={{ color: "#777777", marginLeft: 20 }}>Kolkata, India</Text>
+          </View>
+          <View style={styles.row}>
+            <Icon name="phone" color="#777777" size={20} />
+            <Text style={{ color: "#777777", marginLeft: 20 }}>+91-900000009</Text>
+          </View>
+          <View style={styles.row}>
+            <Icon name="email" color="#777777" size={20} />
+            <Text style={{ color: "#777777", marginLeft: 20 }}>john_doe@email.com</Text>
+          </View>
+        </View>
+
+        <View style={styles.infoBoxWrapper}>
+          <View style={[styles.infoBox, {
+            borderRightColor: '#dddddd',
+            borderRightWidth: 1
+          }]}>
+            <Title>₹140.50</Title>
+            <Caption>Wallet</Caption>
+          </View>
+          <View style={styles.infoBox}>
+            <Title>12</Title>
+            <Caption>Orders</Caption>
+          </View>
+        </View>
+
+        <View style={styles.menuWrapper}>
+          <TouchableRipple onPress={() => { }}>
+            <View style={styles.menuItem}>
+              <Icon name="heart-outline" color="#FF6347" size={25} />
+              <Text style={styles.menuItemText}>Your Favorites</Text>
+            </View>
+          </TouchableRipple>
+          <TouchableRipple onPress={() => { }}>
+            <View style={styles.menuItem}>
+              <Icon name="credit-card" color="#FF6347" size={25} />
+              <Text style={styles.menuItemText}>Payment</Text>
+            </View>
+          </TouchableRipple>
+          <TouchableRipple onPress={() => { }}>
+            <View style={styles.menuItem}>
+              <Icon name="share-outline" color="#FF6347" size={25} />
+              <Text style={styles.menuItemText}>Tell Your Friends</Text>
+            </View>
+          </TouchableRipple>
+          <TouchableRipple onPress={() => { }}>
+            <View style={styles.menuItem}>
+              <Icon name="account-check-outline" color="#FF6347" size={25} />
+              <Text style={styles.menuItemText}>Support</Text>
+            </View>
+          </TouchableRipple>
+          <TouchableRipple onPress={() => { }}>
+            <View style={styles.menuItem}>
+              <Icon name="settings-outline" color="#FF6347" size={25} />
+              <Text style={styles.menuItemText}>Settings</Text>
+            </View>
+          </TouchableRipple>
         </View>
       </SafeAreaView>
-    )
-  }
-}
+    </ScrollView>
+  );
+};
+
+export default ProfileScreen;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
   },
-  imageContainer: {
-    margin: 20,
+  userInfoSection: {
+    paddingHorizontal: 30,
+    marginBottom: 25,
   },
-  image: {
-    width: Layout.window.width - 60, // device width - some margin
-    height: Layout.window.height / 2 - 60, // device height / 2 - some margin
-    borderRadius: 20,
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
   },
-  name: {
-    color: '#5E5E5E',
-    alignSelf: 'flex-start',
-    marginLeft: 30,
-  },
-  desc: {
-    color: '#5E5E5E',
-    alignSelf: 'flex-start',
-    marginTop: 5,
-    marginHorizontal: 30,
+  caption: {
     fontSize: 14,
+    lineHeight: 14,
+    fontWeight: '500',
   },
-  divider: {
-    backgroundColor: '#C0C0C0',
-    width: Layout.window.width - 60,
-    margin: 20,
-  },
-  socialLinks: {
-    flex: 1,
-    alignItems: 'flex-start',
+  row: {
     flexDirection: 'row',
-    width: Layout.window.width,
-    marginLeft: 40,
+    marginBottom: 10,
   },
-  iconContainer: {
-    paddingHorizontal: 8,
+  infoBoxWrapper: {
+    borderBottomColor: '#dddddd',
+    borderBottomWidth: 1,
+    borderTopColor: '#dddddd',
+    borderTopWidth: 1,
+    flexDirection: 'row',
+    height: 100,
+  },
+  infoBox: {
+    width: '50%',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  menuWrapper: {
+    marginTop: 10,
+  },
+  menuItem: {
+    flexDirection: 'row',
     paddingVertical: 15,
+    paddingHorizontal: 30,
   },
-})
-
-export default ProfileScreen
+  menuItemText: {
+    color: '#777777',
+    marginLeft: 20,
+    fontWeight: '600',
+    fontSize: 16,
+    lineHeight: 26,
+  },
+});

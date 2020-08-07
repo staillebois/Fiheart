@@ -1,5 +1,5 @@
 import React from 'react';
-import { createStackNavigator, createBottomTabNavigator } from 'react-navigation';
+import { createStackNavigator, createBottomTabNavigator, createDrawerNavigator } from 'react-navigation';
 import { MaterialCommunityIcons, FontAwesome, Feather } from '@expo/vector-icons';
 
 import TabBarIcon from '../components/TabBarIcon';
@@ -26,20 +26,6 @@ HomeStack.navigationOptions = {
     />
   ),
 };
-
-const TopPicksStack = createStackNavigator({
-  TopPicks: TopPicksScreen,
-},
-{
-    headerMode: 'none',
-})
-
-TopPicksStack.navigationOptions = {
-  tabBarLabel: 'TopPicks',
-  tabBarIcon: ({ focused }) => (
-    <TabBarIcon Icon={FontAwesome} focused={focused} name="diamond" />
-  ),
-}
 
 const MessagesStack = createStackNavigator({
   Messages: MessagesScreen,
@@ -85,10 +71,32 @@ MapStack.navigationOptions = {
 
 const tabNavigator = createBottomTabNavigator({
   HomeStack,
-  TopPicksStack,
+  // TopPicksStack,
   MapStack,
   // MessagesStack,
   ProfileStack,
 });
 
-export default tabNavigator;
+const HomeStackScreen = ({navigation}) => (
+  <HomeStack.Navigator screenOptions={{
+    headerStyle: {
+      backgroundColor: '#009387',
+    },
+    headerTintColor: '#fff',
+    headerTitleStyle: {
+      fontWeight: 'bold'
+    }
+  }}>
+    <HomeStack.Screen name="Home" component={{HomeScreen}} options={{
+      title:'Overview'
+    }} />
+  </HomeStack.Navigator>
+)
+
+const drawerNavigator = createDrawerNavigator({
+  HomeStack,
+  MapStack,
+  ProfileStack
+})
+
+export default drawerNavigator;
