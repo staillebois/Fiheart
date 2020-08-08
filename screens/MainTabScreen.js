@@ -10,7 +10,6 @@ import HomeScreen from './HomeScreen';
 import NotificationScreen from './NotificationScreen';
 import ExploreScreen from './ExploreScreen';
 import ProfileScreen from './ProfileScreen';
-import MapTestScreen from './MapTestScreen';
 import EditProfileScreen from './EditProfileScreen';
 
 import {useTheme, Avatar} from 'react-native-paper';
@@ -32,7 +31,7 @@ const MainTabScreen = () => (
         tabBarLabel: 'Home',
         tabBarColor: '#FF6347',
         tabBarIcon: ({color}) => (
-          <Icon name="ios-home" color={color} size={26} />
+          <MaterialCommunityIcons name="cards-heart" color={color} size={26} />
         ),
       }}
     />
@@ -43,7 +42,7 @@ const MainTabScreen = () => (
         tabBarLabel: 'Updates',
         tabBarColor: '#1f65ff',
         tabBarIcon: ({color}) => (
-          <Icon name="ios-notifications" color={color} size={26} />
+          <MaterialCommunityIcons name="camera-control" color={color} size={26} />
         ),
       }}
     />
@@ -54,7 +53,7 @@ const MainTabScreen = () => (
         tabBarLabel: 'Profile',
         tabBarColor: '#694fad',
         tabBarIcon: ({color}) => (
-          <Icon name="ios-person" color={color} size={26} />
+          <MaterialCommunityIcons name="account" color={color} size={26} />
         ),
       }}
     />
@@ -65,7 +64,7 @@ const MainTabScreen = () => (
         tabBarLabel: 'Explore',
         tabBarColor: '#d02860',
         tabBarIcon: ({color}) => (
-          <Icon name="ios-aperture" color={color} size={26} />
+          <MaterialCommunityIcons name="map-marker-radius" color={color} size={26} />
         ),
       }}
     />
@@ -93,7 +92,7 @@ const HomeStackScreen = ({navigation}) => {
         name="Home"
         component={HomeScreen}
         options={{
-          title: 'FoodFinder',
+          title: 'Spotlike',
           headerLeft: () => (
             <View style={{marginLeft: 10}}>
               <Icon.Button
